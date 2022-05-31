@@ -3,13 +3,14 @@
 A chat app built in React Native for Achievement 5 of the CareerFoundry Full Stack Web Development course.
 
 ## Technologies Used
-React-Native
-Expo
+- React-Native
+- Expo
+- GiftedChat
 
 ## Emulators
-XCode
-Expo Go for iOs
-Android Studio
+- XCode
+- Expo Go for iOs
+- Android Studio
 
 ## User Requirements
 - Log into a new chatroom, after choosing a name and background color
