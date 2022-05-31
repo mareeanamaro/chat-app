@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, TextInput, View, Pressable, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { Text, TextInput, View, Pressable, StyleSheet, ImageBackground, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
 
 import BackgroundImage from '../img/BackgroundImage.png';
 
@@ -15,7 +15,7 @@ const colors = {
 export default function Start(props) {
 
     let [name, setName] = useState();
-    let [color = '#090C08', setColor] = useState();
+    let [color = '#8A95A5', setColor] = useState();
 
     return (
 
@@ -34,18 +34,20 @@ export default function Start(props) {
                 {/* set box with remaining content */}
                 <View style={styles.contentBox}>
                     <View style={styles.inputBox}>
-                        <SvgUri
+                        {/* <SvgUri
                             width="5%"
                             height="80%"
                             style={styles.svg}
                             uri="https://gist.githack.com/mareeanamaro/23c8f293334f973e59f6065b7db2a24f/raw/9b720e53a177af5976e4666ab872c4154d04e24f/icon.svg"
-                        />
+                        /> */}
                         <TextInput
                             style={styles.input}
                             placeholder="Your Name"
                             value={name}
                             onChangeText={(name) => setName(name)}
                         />
+                         { Platform.OS === 'iOS' ? <KeyboardAvoidingView behavior="height" /> : null
+                }
                     </View>
                     <View style={styles.backgroundChoiceBox}>
                         <Text style={styles.backgroundChoiceText}>Choose Background Color:</Text>
