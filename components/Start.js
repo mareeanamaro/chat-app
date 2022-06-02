@@ -5,6 +5,7 @@ import BackgroundImage from '../img/BackgroundImage.png';
 
 import { SvgUri } from 'react-native-svg';
 
+// set color choices for background
 const colors = {
     black: '#090C08',
     purple: '#474056',
@@ -46,8 +47,8 @@ export default function Start(props) {
                             value={name}
                             onChangeText={(name) => setName(name)}
                         />
-                         { Platform.OS === 'iOS' ? <KeyboardAvoidingView behavior="height" /> : null
-                }
+                        {Platform.OS === 'iOS' ? <KeyboardAvoidingView behavior="height" /> : null
+                        }
                     </View>
                     <View style={styles.backgroundChoiceBox}>
                         <Text style={styles.backgroundChoiceText}>Choose Background Color:</Text>
@@ -94,7 +95,6 @@ export default function Start(props) {
                     </Pressable>
                 </View>
             </ImageBackground>
-
         </View>
     )
 }
@@ -186,6 +186,4 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#fff'
     },
-
-
 })
