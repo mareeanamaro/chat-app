@@ -41,8 +41,6 @@ const app = initializeApp(firebaseConfig);
 // initialize cloud firestore
 const db = getFirestore(app);
 
-const auth = getAuth();
-
 export default function Chat(props) {
   // get user name and preferred colour from the props
   let { name, color } = props.route.params;
@@ -94,6 +92,7 @@ export default function Chat(props) {
 
   useEffect(() => {
     props.navigation.setOptions({ title: name });
+    console.log(props.navigation);
     let unsubscribe;
     NetInfo.fetch().then((connection) => {
       if (connection.isConnected) {
@@ -102,7 +101,7 @@ export default function Chat(props) {
         setIsConnected(false);
       }
 
-      authUnsubscribe = onAuthStateChanged(auth, async (user) => {
+      const authUnsubscribe = onAuthStateChanged(auth, async (user) => {
         // check if there is user and sign in anon if not
         if (!user) {
           await signInAnonymously(auth);
