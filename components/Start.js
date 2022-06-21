@@ -3,11 +3,6 @@ import { Text, TextInput, View, Pressable, StyleSheet, ImageBackground, Touchabl
 
 import BackgroundImage from '../img/BackgroundImage.png';
 
-import { signInAnonymously } from "firebase/auth";
-import { auth } from '../config/firebase';
-
-import NetInfo from '@react-native-community/netinfo';
-
 // set color choices for background
 const colors = {
     black: '#090C08',
@@ -20,23 +15,6 @@ export default function Start(props) {
 
     let [name, setName] = useState();
     let [color = '#8A95A5', setColor] = useState();
-
-    // state to hold offine/online state
-    let [isConnected, setIsConnected] = useState(false);
-
-    // 
-    const onHandleStart = () => {
-        if(isConnected) {
-            signInAnonymously(auth)
-            .then(() => {
-                console.log('Login successful');
-                props.navigation.navigate('Chat', { name: name, color: color})
-            })
-            .catch(err => console.log(`Login err: ${err}`)) 
-        } else {
-            props.navigation.navigate('Chat', { name: name, color: color })
-        }
-    }
 
     return (
 
@@ -55,12 +33,6 @@ export default function Start(props) {
                 {/* set box with remaining content */}
                 <View style={styles.contentBox}>
                     <View style={styles.inputBox}>
-                        {/* <SvgUri
-                            width="5%"
-                            height="80%"
-                            style={styles.svg}
-                            uri="https://gist.githack.com/mareeanamaro/23c8f293334f973e59f6065b7db2a24f/raw/9b720e53a177af5976e4666ab872c4154d04e24f/icon.svg"
-                        /> */}
                         <TextInput
                             style={styles.input}
                             placeholder="Your Name"
@@ -101,7 +73,7 @@ export default function Start(props) {
                         </View>
                     </View>
                     <Pressable
-                        onPress={onHandleStart}
+                        onPress={() => props.navigation.navigate('Chat', { name: name, color: color })}
                         style={({ pressed }) => [
                             {
                                 backgroundColor: pressed
