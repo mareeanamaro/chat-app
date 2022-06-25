@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 
 // import stylesheets and chat library
-import { View, Platform, StyleSheet, KeyboardAvoidingView } from "react-native";
+import { View, Platform, StyleSheet, KeyboardAvoidingView, Text } from "react-native";
 import {
   Bubble,
   GiftedChat,
@@ -11,35 +11,23 @@ import {
 } from "react-native-gifted-chat";
 
 // import firebase for the database
-import { initializeApp } from "firebase/app";
 import {
-  getFirestore,
   collection,
   onSnapshot,
   addDoc,
   query,
   orderBy,
 } from "firebase/firestore";
-import { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth";
+
+import { auth, db } from '../config/firebase';
 
 //import async storage and netinfo so the app works offline
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 
-// set firebase configurations
-const firebaseConfig = {
-  apiKey: "AIzaSyDaT0PhoMpVk-QwVv7tw21FGAHAmpYXYcc",
-  authDomain: "chat-app-ef3d5.firebaseapp.com",
-  projectId: "chat-app-ef3d5",
-  storageBucket: "chat-app-ef3d5.appspot.com",
-  messagingSenderId: "593694663825",
-  appId: "1:593694663825:web:e50141f5d783b03f824b30",
-};
-
-// initialize firebase
-const app = initializeApp(firebaseConfig);
-// initialize cloud firestore
-const db = getFirestore(app);
+//import custom actions and map view
+import CustomActions from "./CustomActions";
+import MapView from 'react-native-maps';
 
 export default function Chat(props) {
   // get user name and preferred colour from the props
@@ -47,17 +35,8 @@ export default function Chat(props) {
 
   // state to hold messages
   const [messages, setMessages] = useState([]);
-  // state to hold uid for authentication
-  const [uid, setUid] = useState();
-  // state to hold user object
-  const [user, setUser] = useState({
-    _id: "",
-    name: "",
-    avatar: "",
-  });
   // state to hold online/offline state
   const [isConnected, setIsConnected] = useState(false);
-
   // create reference to messages collection on firestore
   const referenceChatMessages = collection(db, "messages");
 
@@ -91,32 +70,21 @@ export default function Chat(props) {
   };
 
   useEffect(() => {
+    // set the screen title to the name
     props.navigation.setOptions({ title: name });
-    console.log(props.navigation);
+    // create variable to hold unsubscriber
     let unsubscribe;
+
+    // check if user is online
     NetInfo.fetch().then((connection) => {
       if (connection.isConnected) {
         setIsConnected(true);
       } else {
         setIsConnected(false);
       }
-
-      const authUnsubscribe = onAuthStateChanged(auth, async (user) => {
-        // check if there is user and sign in anon if not
-        if (!user) {
-          await signInAnonymously(auth);
-        }
-
-        // set states
-        setUid(user.uid);
-        setMessages([]);
-        setUser({
-          _id: user.uid,
-          name: name,
-          avatar: "https://placeimg.com/140/140/any",
-        });
-      });
     });
+
+    // if user is online, retrieve messages from firebase, if not show the messages in local storage
     if (isConnected) {
       const messagesQuery = query(
         referenceChatMessages,
@@ -125,7 +93,10 @@ export default function Chat(props) {
       unsubscribe = onSnapshot(messagesQuery, onCollectionUpdate);
       deleteMessages();
       saveMessages();
-      return () => unsubscribe();
+
+      return () => {
+        unsubscribe();
+      };
     } else {
       getMessages();
     }
@@ -138,6 +109,8 @@ export default function Chat(props) {
       text: message.text || "",
       createdAt: message.createdAt,
       user: message.user,
+      image: message.image || null,
+      location: message.location || null
     });
   };
 
@@ -147,7 +120,6 @@ export default function Chat(props) {
       GiftedChat.append(previousMessages, messages)
     );
     addMessage(messages[0]);
-    saveMessages();
   }, []);
 
   // updates the state with messages when there is an update
@@ -155,12 +127,13 @@ export default function Chat(props) {
     const messages = [];
     querySnapshot.forEach((doc) => {
       var data = doc.data();
-      console.log(data.user);
       messages.push({
         _id: data._id,
         text: data.text,
         createdAt: data.createdAt.toDate(),
         user: data.user,
+        image: data.image || null,
+        location: data.location  || null
       });
     });
     setMessages(messages);
@@ -200,6 +173,35 @@ export default function Chat(props) {
     }
   };
 
+  //render the custom actions component next to the input bar so the user can send images and location
+  const renderCustomActions = (props) => {
+    return <CustomActions {...props} />
+  }
+
+  //function to render map view
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if(currentMessage.location) {
+      return(
+        <MapView
+          style={{
+            width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3
+          }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
+          }}
+        />
+      )
+    }
+    return null;
+  }
+
   return (
     <>
       <View style={[{ backgroundColor: color }, styles.container]}>
@@ -208,13 +210,15 @@ export default function Chat(props) {
           renderBubble={renderBubble.bind()}
           renderSystemMessage={renderSystemMessage.bind()}
           renderDay={renderDay.bind()}
+          renderActions={renderCustomActions.bind()}
           renderInputToolbar={renderInputToolbar.bind()}
+          renderCustomView={renderCustomView}
           messages={messages}
           onSend={(messages) => onSend(messages)}
           user={{
-            _id: user._id,
-            name: user.name,
-            avatar: user.avatar,
+            _id: auth?.currentUser?.uid,
+          name: name,
+          avatar: 'https://placeimg.com/140/140/any'
           }}
         />
         {Platform.OS === "android" ? (

@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, TextInput, View, Pressable, StyleSheet, ImageBackground, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
-
 import BackgroundImage from '../img/BackgroundImage.png';
+
+import { signInAnonymously } from "firebase/auth";
+import { auth } from '../config/firebase';
+
+import NetInfo from '@react-native-community/netinfo';
 
 // set color choices for background
 const colors = {
@@ -13,8 +17,41 @@ const colors = {
 
 export default function Start(props) {
 
+    // state to hold name and color of bg
     let [name, setName] = useState();
     let [color = '#8A95A5', setColor] = useState();
+
+    // State to hold information if user is offline or online
+  const [isConnected, setIsConnected] = useState(false);
+
+  // Authenticate the user via Firebase and then redirect to the chat screen, passing the name and color props
+  const onHandleStart = () => {
+    if (isConnected) {
+      signInAnonymously(auth)
+        .then(() => {
+          console.log('Login success');
+          props.navigation.navigate('Chat', { name: name, color: color });
+        })
+        .catch(err => console.log(`Login err: ${err}`));
+    }
+    else {
+      props.navigation.navigate('Chat', { name: name, color: color });
+    }
+ }
+
+  useEffect(() => {
+
+    // Check if user is offline or online using NetInfo
+    NetInfo.fetch().then(connection => {
+      if (connection.isConnected) {
+        setIsConnected(true);
+      } else {
+        setIsConnected(false);
+      }
+    });
+
+  })
+
 
     return (
 
@@ -73,7 +110,7 @@ export default function Start(props) {
                         </View>
                     </View>
                     <Pressable
-                        onPress={() => props.navigation.navigate('Chat', { name: name, color: color })}
+                        onPress={onHandleStart}
                         style={({ pressed }) => [
                             {
                                 backgroundColor: pressed
@@ -87,6 +124,7 @@ export default function Start(props) {
                     </Pressable>
                 </View>
             </ImageBackground>
+            {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
         </View>
     )
 }
