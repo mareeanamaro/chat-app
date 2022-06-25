@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
+import PropTypes from 'prop-types';
 
 // import stylesheets and chat library
-import { View, Platform, StyleSheet, KeyboardAvoidingView, Text } from "react-native";
+import {
+  View,
+  Platform,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Text,
+} from "react-native";
 import {
   Bubble,
   GiftedChat,
@@ -19,7 +26,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 
-import { auth, db } from '../config/firebase';
+import { auth, db } from "../config/firebase";
 
 //import async storage and netinfo so the app works offline
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,7 +34,7 @@ import NetInfo from "@react-native-community/netinfo";
 
 //import custom actions and map view
 import CustomActions from "./CustomActions";
-import MapView from 'react-native-maps';
+import MapView from "react-native-maps";
 
 export default function Chat(props) {
   // get user name and preferred colour from the props
@@ -110,7 +117,7 @@ export default function Chat(props) {
       createdAt: message.createdAt,
       user: message.user,
       image: message.image || null,
-      location: message.location || null
+      location: message.location || null,
     });
   };
 
@@ -133,7 +140,7 @@ export default function Chat(props) {
         createdAt: data.createdAt.toDate(),
         user: data.user,
         image: data.image || null,
-        location: data.location  || null
+        location: data.location || null,
       });
     });
     setMessages(messages);
@@ -168,39 +175,41 @@ export default function Chat(props) {
   // customise input to only work if the user is online
   const renderInputToolbar = (props) => {
     if (!isConnected) {
+      // hide input box
     } else {
+      // display input box
       return <InputToolbar {...props} />;
     }
   };
 
   //render the custom actions component next to the input bar so the user can send images and location
   const renderCustomActions = (props) => {
-    return <CustomActions {...props} />
-  }
+    return <CustomActions {...props} />;
+  };
 
   //function to render map view
   const renderCustomView = (props) => {
     const { currentMessage } = props;
-    if(currentMessage.location) {
-      return(
+    if (currentMessage.location) {
+      return (
         <MapView
           style={{
             width: 150,
             height: 100,
             borderRadius: 13,
-            margin: 3
+            margin: 3,
           }}
           region={{
             latitude: currentMessage.location.latitude,
             longitude: currentMessage.location.longitude,
             latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
+            longitudeDelta: 0.0421,
           }}
         />
-      )
+      );
     }
     return null;
-  }
+  };
 
   return (
     <>
@@ -217,8 +226,8 @@ export default function Chat(props) {
           onSend={(messages) => onSend(messages)}
           user={{
             _id: auth?.currentUser?.uid,
-          name: name,
-          avatar: 'https://placeimg.com/140/140/any'
+            name: name,
+            avatar: "https://placeimg.com/140/140/any",
           }}
         />
         {Platform.OS === "android" ? (
@@ -234,3 +243,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+Chat.propTypes = {
+  route: PropTypes.string,
+  navigation: PropTypes.func,
+  currentMessage: PropTypes.object,
+}

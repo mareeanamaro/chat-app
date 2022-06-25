@@ -6,11 +6,7 @@ import * as Location from "expo-location";
 //native component to allow text components to be clickable (and button)
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { storage } from "../config/firebase";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default class CustomActions extends React.Component {
   imagePicker = async () => {
@@ -170,7 +166,7 @@ const styles = StyleSheet.create({
   },
 });
 
-//proptype for customactions component
+//proptype for custom actions component
 CustomActions.contextTypes = {
   actionSheet: PropTypes.func,
 };
