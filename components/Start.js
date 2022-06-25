@@ -220,5 +220,5 @@ const styles = StyleSheet.create({
 });
 
 Start.propTypes= {
-    navigation: PropTypes.func
+    navigation: PropTypes.object
 }
