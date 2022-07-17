@@ -1,17 +1,16 @@
 # Chatterbox
 
+## Project Description
 A chat app built in React Native for Achievement 5 of the CareerFoundry Full Stack Web Development course.
 
-## How to Run
+## Key Features
 
-- Install Expo globally
-  `npm install -g expo-cli`
-- Install dependencies locally
-  `npm install`
-- Initialise project in Expo
-  `expo init 'chat-app'`
-- Launch
-  `npm run start` or `expo start`
+- Log into a new chatroom, after choosing a name and background color
+- Send messages
+- Send images
+- Share location
+- Offline mode (read-only)
+- Accessibility features for users with a visual impairment
 
 ## Technologies Used
 
@@ -27,19 +26,16 @@ A chat app built in React Native for Achievement 5 of the CareerFoundry Full Sta
 - Expo Go for iOs
 - Android Studio
 
-## User Requirements
+## Screenshot
+![Start View](./screenshots/start-screen.png) ![Chat View](./screenshots/chat-screen.png)
 
-- Log into a new chatroom, after choosing a name and background color
-- Send messages
-- Send images
-- Share location
-- Offline mode (read-only)
-- Accessibility features for users with a visual impairment
+## How to Run
 
-## Author
-
-mareeana
-
-## Version
-
-0.1.0
+- Install Expo globally
+  `npm install -g expo-cli`
+- Install dependencies locally
+  `npm install`
+- Initialise project in Expo
+  `expo init 'chat-app'`
+- Launch
+  `npm run start` or `expo start`

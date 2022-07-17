@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
 });
 
 Chat.propTypes = {
-  route: PropTypes.string,
-  navigation: PropTypes.func,
+  route: PropTypes.object,
+  navigation: PropTypes.object,
   currentMessage: PropTypes.object,
 }

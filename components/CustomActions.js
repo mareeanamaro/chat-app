@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 //imports for communicatios features (permission and device camera/image gallery)
 import * as ImagePicker from "expo-image-picker";
@@ -8,7 +8,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { storage } from "../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-export default class CustomActions extends React.Component {
+export default class CustomActions extends Component {
   imagePicker = async () => {
     // expo permission
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
